@@ -13,8 +13,12 @@ warnings.filterwarnings("ignore")
 from data.cache import load_cache, save_cache
 from config import CACHE_TTL_HOURS, FRED_API_KEY
 
-# Try to load FRED API key from environment
-_api_key = os.getenv("FRED_API_KEY", FRED_API_KEY)
+# Try to load FRED API key from Streamlit secrets first, then env, then config
+try:
+    import streamlit as st
+    _api_key = st.secrets.get("FRED_API_KEY", os.getenv("FRED_API_KEY", FRED_API_KEY))
+except Exception:
+    _api_key = os.getenv("FRED_API_KEY", FRED_API_KEY)
 
 # FRED series IDs used in the dashboard
 FRED_SERIES = {
